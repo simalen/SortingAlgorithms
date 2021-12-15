@@ -84,26 +84,40 @@ void merge(ElementType* arrayToSort, int start, int mid, int end, Statistics* st
     ElementType* tempArray = malloc(sizeof(ElementType)*(end-start));
     int i = 0, i1 = start, i2 = mid+1;
 
-    while(i1 <= mid && i2 <= end) {
+    //while(i1 <= mid && i2 <= end) {
+    while(lessThanOrEqualTo(i1, mid, statistics) && lessThanOrEqualTo(i2, end, statistics)) {
         if(arrayToSort[i1] < arrayToSort[i2]) {
+
+        //printf("e1: %d, e2: %d\n", arrayToSort[i1], arrayToSort[i2]);
+        //printf("if: %d\n", arrayToSort[i1] < arrayToSort[i2]);
+        //printf("lessthan: %d\n\n", lessThan(arrayToSort[i1], arrayToSort[i2], statistics));
+
+        //if(lessThan(arrayToSort[i1], arrayToSort[i2], statistics)) { TODO: Access out of bound/not set value = Error.
             tempArray[i++] = arrayToSort[i1++];
         }
-        else if(arrayToSort[i1] >= arrayToSort[i2]) {
+        //else if(arrayToSort[i1] >= arrayToSort[i2]) {
+        else if(greaterThanOrEqualTo(arrayToSort[i1], arrayToSort[i2], statistics)) {
             tempArray[i++] = arrayToSort[i2++];
         }
     }
 
-    if(i1 <= mid) {
-        while(i1 <= mid) {
+    //if(i1 <= mid) {
+    if(lessThanOrEqualTo(i1, mid, statistics)) {
+        //while(i1 <= mid) {
+        while(lessThanOrEqualTo(i1, mid, statistics)) {
             tempArray[i++] = arrayToSort[i1++];
         }
     }
-    else if(i2 <= end) {
-        while(i2 <= end) {
+
+    //else if(i2 <= end) {
+    else if(lessThanOrEqualTo(i2, end, statistics)) {
+        //while(i2 <= end) {
+        while(lessThanOrEqualTo(i2, end, statistics)) {
             tempArray[i++] = arrayToSort[i2++];
         }
     }
-    for(int j = start; j <= end; j++) {
+    //for(int j = start; j <= end; j++) {
+    for(int j = start; lessThanOrEqualTo(j, end, statistics); j++) {
         arrayToSort[j] = tempArray[j-start];
     }
     free(tempArray);
