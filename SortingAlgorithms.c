@@ -9,9 +9,9 @@ int isImplemented(SortingAlgorithm algorithm)
 {
 	switch (algorithm)
 	{
-//        case BUBBLE_SORT:
+        case BUBBLE_SORT:
 //        case INSERTION_SORT:
-//        case SELECTION_SORT:
+        case SELECTION_SORT:
 //        case QUICK_SORT:
         case MERGE_SORT:
             return 1;
@@ -27,18 +27,16 @@ int isImplemented(SortingAlgorithm algorithm)
 /******************************************************************************************/
 /* Era algoritmer har: */
 
-void printTheArrayPls(ElementType* arrayToSort, unsigned int size) {
-    printf_s("\nArray: [");
-    for(int i = 0; i < size; i++) {
-        printf_s(" %d ", arrayToSort[i]);
-    }
-    printf_s("]\n");
+void printTheArrayPls(ElementType* arrayToSort, unsigned int size, const char string[]) {
+    printf_s("\n#=====================================================#\n\n@ Array (%s), Array size (%d)\n[ ", string, size);
+    for(int i = 0; i < size; i++)
+        printf_s("%d ", arrayToSort[i]);
+    printf_s("]\n\n#=====================================================#\n");
 }
 
 static void bubbleSort(ElementType* arrayToSort, unsigned int size, Statistics* statistics)
 {
-    printf_s("#=== BUBBLE SORT ===#\n");
-    printTheArrayPls(arrayToSort, size);
+    printTheArrayPls(arrayToSort, size, "Start of bubbleSort");
 
     int occurrence;
     do {
@@ -52,8 +50,7 @@ static void bubbleSort(ElementType* arrayToSort, unsigned int size, Statistics* 
         }
     }while(!equalTo(occurrence, 0, statistics));
 
-    printTheArrayPls(arrayToSort, size);
-    printf_s("\n#=== END OF BUBBLE SORT ===#\n");
+    printTheArrayPls(arrayToSort, size, "End of bubbleSort");
 }
 
 static void insertionSort(ElementType* arrayToSort, unsigned int size, Statistics* statistics)
@@ -63,12 +60,10 @@ static void insertionSort(ElementType* arrayToSort, unsigned int size, Statistic
 
 static void selectionSort(ElementType* arrayToSort, unsigned int size, Statistics* statistics)
 {
-    printf_s("#=== SELECTION SORT ===#\n");
-    printTheArrayPls(arrayToSort, size);
+    printTheArrayPls(arrayToSort, size, "Start of selectionSort");
 
-    int v = 0, indexOfSmallest;
-    for(int maxIndex = 0; lessThan(v, size, statistics); maxIndex++) {
-        indexOfSmallest = v;
+    int v = 0, indexOfSmallest = v;
+    for(int maxIndex = 0; lessThan(v, size, statistics); maxIndex++, indexOfSmallest = v) {
         for(int index = v; lessThan(index, size, statistics); index++)
             if(lessThan(arrayToSort[index], arrayToSort[indexOfSmallest], statistics))
                 indexOfSmallest = index;
@@ -76,51 +71,38 @@ static void selectionSort(ElementType* arrayToSort, unsigned int size, Statistic
         v++;
     }
 
-    printTheArrayPls(arrayToSort, size);
-    printf_s("\n#=== END OF SELECTION SORT ===#\n");
+    printTheArrayPls(arrayToSort, size, "End of selectionSort");
 }
 
 void merge(ElementType* arrayToSort, int start, int mid, int end, Statistics* statistics) {
-    ElementType* tempArray = malloc(sizeof(ElementType)*(end-start));
+    ElementType* T = calloc((end-start+1), sizeof(ElementType));
+    if(T == NULL) {
+        printf_s("tempArray is NULL! Aborting program...");
+        abort();
+    }
     int i = 0, i1 = start, i2 = mid+1;
-
-    //while(i1 <= mid && i2 <= end) {
     while(lessThanOrEqualTo(i1, mid, statistics) && lessThanOrEqualTo(i2, end, statistics)) {
-        if(arrayToSort[i1] < arrayToSort[i2]) {
-
-        //printf("e1: %d, e2: %d\n", arrayToSort[i1], arrayToSort[i2]);
-        //printf("if: %d\n", arrayToSort[i1] < arrayToSort[i2]);
-        //printf("lessthan: %d\n\n", lessThan(arrayToSort[i1], arrayToSort[i2], statistics));
-
-        //if(lessThan(arrayToSort[i1], arrayToSort[i2], statistics)) { TODO: Access out of bound/not set value = Error.
-            tempArray[i++] = arrayToSort[i1++];
-        }
-        //else if(arrayToSort[i1] >= arrayToSort[i2]) {
-        else if(greaterThanOrEqualTo(arrayToSort[i1], arrayToSort[i2], statistics)) {
-            tempArray[i++] = arrayToSort[i2++];
-        }
+        if(lessThan(arrayToSort[i1], arrayToSort[i2], statistics))
+            swapElements(&T[i++], &arrayToSort[i1++], statistics);
+            //T[i++] = arrayToSort[i1++];
+        else if(greaterThanOrEqualTo(arrayToSort[i1], arrayToSort[i2], statistics))
+            swapElements(&T[i++], &arrayToSort[i2++], statistics);
+            //T[i++] = arrayToSort[i2++];
     }
 
-    //if(i1 <= mid) {
-    if(lessThanOrEqualTo(i1, mid, statistics)) {
-        //while(i1 <= mid) {
-        while(lessThanOrEqualTo(i1, mid, statistics)) {
-            tempArray[i++] = arrayToSort[i1++];
-        }
-    }
+    if(lessThanOrEqualTo(i1, mid, statistics))
+        while(lessThanOrEqualTo(i1, mid, statistics))
+            swapElements(&T[i++], &arrayToSort[i1++], statistics);
+            //T[i++] = arrayToSort[i1++];
+    else if(lessThanOrEqualTo(i2, end, statistics))
+        while(lessThanOrEqualTo(i2, end, statistics))
+            swapElements(&T[i++], &arrayToSort[i2++], statistics);
+            //T[i++] = arrayToSort[i2++];
+    for(int j = start; lessThanOrEqualTo(j, end, statistics); j++)
+        swapElements(&arrayToSort[j], &T[j-start], statistics);
+        //arrayToSort[j] = T[j-start];
 
-    //else if(i2 <= end) {
-    else if(lessThanOrEqualTo(i2, end, statistics)) {
-        //while(i2 <= end) {
-        while(lessThanOrEqualTo(i2, end, statistics)) {
-            tempArray[i++] = arrayToSort[i2++];
-        }
-    }
-    //for(int j = start; j <= end; j++) {
-    for(int j = start; lessThanOrEqualTo(j, end, statistics); j++) {
-        arrayToSort[j] = tempArray[j-start];
-    }
-    free(tempArray);
+    free(T);
 }
 
 void split(ElementType* arrayToSort, int start, int end, Statistics* statistics) {
@@ -131,14 +113,13 @@ void split(ElementType* arrayToSort, int start, int end, Statistics* statistics)
     merge(arrayToSort, start, mid, end, statistics);
 }
 
+
 static void mergeSort(ElementType* arrayToSort, unsigned int size, Statistics* statistics) {
-    printf_s("#=== MERGE SORT ===#\n");
-    printTheArrayPls(arrayToSort, size);
+    printTheArrayPls(arrayToSort, size, "Start of mergeSort");
 
-    split(arrayToSort, 0, size, statistics);
+    split(arrayToSort, 0, size-1, statistics);
 
-    printTheArrayPls(arrayToSort, size);
-    printf_s("\n#=== END OF MERGE SORT ===#\n");
+    printTheArrayPls(arrayToSort, size, "End of mergeSort");
 }
 
 static void quickSort(ElementType* arrayToSort, unsigned int size, Statistics* statistics)
