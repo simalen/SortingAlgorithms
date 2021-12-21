@@ -38,17 +38,14 @@ static void bubbleSort(ElementType* arrayToSort, unsigned int size, Statistics* 
 {
     printTheArrayPls(arrayToSort, size, "Start of bubbleSort");
 
-    int occurrence;
-    do {
-        occurrence = 0;
-        for(int index = 0; lessThan(index+1, size, statistics); index++) {
-            unsigned int T;
-            if(greaterThan(arrayToSort[index], arrayToSort[index+1], statistics)) {
+    for (int i = 0, occ = 0; lessThan(i, size-1, statistics); i++) {
+        for (int index = 0 ; lessThan(index, size-1-i, statistics); index++)
+            if (greaterThan(arrayToSort[index], arrayToSort[index+1], statistics)) {
                 swapElements(&arrayToSort[index+1], &arrayToSort[index], statistics);
-                occurrence++;
+                occ++;
             }
-        }
-    }while(!equalTo(occurrence, 0, statistics));
+        if(!occ) break;
+    }
 
     printTheArrayPls(arrayToSort, size, "End of bubbleSort");
 }
@@ -63,12 +60,11 @@ static void selectionSort(ElementType* arrayToSort, unsigned int size, Statistic
     printTheArrayPls(arrayToSort, size, "Start of selectionSort");
 
     int v = 0, indexOfSmallest = v;
-    for(int maxIndex = 0; lessThan(v, size, statistics); maxIndex++, indexOfSmallest = v) {
-        for(int index = v; lessThan(index, size, statistics); index++)
+    for(int maxIndex = 0; lessThan(v, size-1, statistics); maxIndex++, v++, indexOfSmallest = v) {
+        for(int index = v+1; lessThan(index, size, statistics); index++)
             if(lessThan(arrayToSort[index], arrayToSort[indexOfSmallest], statistics))
                 indexOfSmallest = index;
         swapElements(&arrayToSort[v], &arrayToSort[indexOfSmallest], statistics);
-        v++;
     }
 
     printTheArrayPls(arrayToSort, size, "End of selectionSort");
@@ -76,31 +72,23 @@ static void selectionSort(ElementType* arrayToSort, unsigned int size, Statistic
 
 void merge(ElementType* arrayToSort, int start, int mid, int end, Statistics* statistics) {
     ElementType* T = calloc((end-start+1), sizeof(ElementType));
-    if(T == NULL) {
-        printf_s("tempArray is NULL! Aborting program...");
-        abort();
+    if(T == NULL) abort();
+    int index = 0, index1 = start, index2 = mid + 1;
+    while(lessThanOrEqualTo(index1, mid, statistics) && lessThanOrEqualTo(index2, end, statistics)) {
+        if(lessThan(arrayToSort[index1], arrayToSort[index2], statistics))
+            T[index++] = arrayToSort[index1++];
+        else if(greaterThanOrEqualTo(arrayToSort[index1], arrayToSort[index2], statistics))
+            T[index++] = arrayToSort[index2++];
     }
-    int i = 0, i1 = start, i2 = mid+1;
-    while(lessThanOrEqualTo(i1, mid, statistics) && lessThanOrEqualTo(i2, end, statistics)) {
-        if(lessThan(arrayToSort[i1], arrayToSort[i2], statistics))
-            swapElements(&T[i++], &arrayToSort[i1++], statistics);
-            //T[i++] = arrayToSort[i1++];
-        else if(greaterThanOrEqualTo(arrayToSort[i1], arrayToSort[i2], statistics))
-            swapElements(&T[i++], &arrayToSort[i2++], statistics);
-            //T[i++] = arrayToSort[i2++];
-    }
+    if(lessThanOrEqualTo(index1, mid, statistics))
+        while(lessThanOrEqualTo(index1, mid, statistics))
+            T[index++] = arrayToSort[index1++];
+    else if(lessThanOrEqualTo(index2, end, statistics))
+        while(lessThanOrEqualTo(index2, end, statistics))
+            T[index++] = arrayToSort[index2++];
 
-    if(lessThanOrEqualTo(i1, mid, statistics))
-        while(lessThanOrEqualTo(i1, mid, statistics))
-            swapElements(&T[i++], &arrayToSort[i1++], statistics);
-            //T[i++] = arrayToSort[i1++];
-    else if(lessThanOrEqualTo(i2, end, statistics))
-        while(lessThanOrEqualTo(i2, end, statistics))
-            swapElements(&T[i++], &arrayToSort[i2++], statistics);
-            //T[i++] = arrayToSort[i2++];
-    for(int j = start; lessThanOrEqualTo(j, end, statistics); j++)
-        swapElements(&arrayToSort[j], &T[j-start], statistics);
-        //arrayToSort[j] = T[j-start];
+    for(int i = start; lessThanOrEqualTo(i, end, statistics); i++)
+        arrayToSort[i] = T[i-start];
 
     free(T);
 }
