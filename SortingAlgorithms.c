@@ -27,7 +27,7 @@ int isImplemented(SortingAlgorithm algorithm)
 /******************************************************************************************/
 /* Era algoritmer har: */
 
-void printTheArrayPls(ElementType* arrayToSort, unsigned int size, const char string[]) {
+void printArray2(ElementType* arrayToSort, unsigned int size, const char string[]) {
     printf_s("\n#=====================================================#\n\n@ Array (%s), Array size (%d)\n[ ", string, size);
     for(int i = 0; i < size; i++)
         printf_s("%d ", arrayToSort[i]);
@@ -36,8 +36,7 @@ void printTheArrayPls(ElementType* arrayToSort, unsigned int size, const char st
 
 static void bubbleSort(ElementType* arrayToSort, unsigned int size, Statistics* statistics)
 {
-    printTheArrayPls(arrayToSort, size, "Start of bubbleSort");
-
+    //printArray2(arrayToSort, size, "Start of bubbleSort");
     for (int i = 0, occ = 0; lessThan(i, size-1, statistics); i++) {
         for (int index = 0 ; lessThan(index, size-1-i, statistics); index++)
             if (greaterThan(arrayToSort[index], arrayToSort[index+1], statistics)) {
@@ -46,8 +45,7 @@ static void bubbleSort(ElementType* arrayToSort, unsigned int size, Statistics* 
             }
         if(!occ) break;
     }
-
-    printTheArrayPls(arrayToSort, size, "End of bubbleSort");
+    //printArray2(arrayToSort, size, "End of bubbleSort");
 }
 
 static void insertionSort(ElementType* arrayToSort, unsigned int size, Statistics* statistics)
@@ -57,8 +55,7 @@ static void insertionSort(ElementType* arrayToSort, unsigned int size, Statistic
 
 static void selectionSort(ElementType* arrayToSort, unsigned int size, Statistics* statistics)
 {
-    printTheArrayPls(arrayToSort, size, "Start of selectionSort");
-
+    //printArray2(arrayToSort, size, "Start of selectionSort");
     int v = 0, indexOfSmallest = v;
     for(int maxIndex = 0; lessThan(v, size-1, statistics); maxIndex++, v++, indexOfSmallest = v) {
         for(int index = v+1; lessThan(index, size, statistics); index++)
@@ -66,8 +63,7 @@ static void selectionSort(ElementType* arrayToSort, unsigned int size, Statistic
                 indexOfSmallest = index;
         swapElements(&arrayToSort[v], &arrayToSort[indexOfSmallest], statistics);
     }
-
-    printTheArrayPls(arrayToSort, size, "End of selectionSort");
+    //printArray2(arrayToSort, size, "End of selectionSort");
 }
 
 void merge(ElementType* arrayToSort, int start, int mid, int end, Statistics* statistics) {
@@ -80,12 +76,10 @@ void merge(ElementType* arrayToSort, int start, int mid, int end, Statistics* st
         else if(greaterThanOrEqualTo(arrayToSort[index1], arrayToSort[index2], statistics))
             T[index++] = arrayToSort[index2++];
     }
-    if(lessThanOrEqualTo(index1, mid, statistics))
-        while(lessThanOrEqualTo(index1, mid, statistics))
-            T[index++] = arrayToSort[index1++];
-    else if(lessThanOrEqualTo(index2, end, statistics))
-        while(lessThanOrEqualTo(index2, end, statistics))
-            T[index++] = arrayToSort[index2++];
+    while(lessThanOrEqualTo(index1, mid, statistics))
+        T[index++] = arrayToSort[index1++];
+    while(lessThanOrEqualTo(index2, end, statistics))
+        T[index++] = arrayToSort[index2++];
 
     for(int i = start; lessThanOrEqualTo(i, end, statistics); i++)
         arrayToSort[i] = T[i-start];
@@ -103,11 +97,9 @@ void split(ElementType* arrayToSort, int start, int end, Statistics* statistics)
 
 
 static void mergeSort(ElementType* arrayToSort, unsigned int size, Statistics* statistics) {
-    printTheArrayPls(arrayToSort, size, "Start of mergeSort");
-
+    //printArray2(arrayToSort, size, "Start of mergeSort");
     split(arrayToSort, 0, size-1, statistics);
-
-    printTheArrayPls(arrayToSort, size, "End of mergeSort");
+    //printArray2(arrayToSort, size, "End of mergeSort");
 }
 
 static void quickSort(ElementType* arrayToSort, unsigned int size, Statistics* statistics)
